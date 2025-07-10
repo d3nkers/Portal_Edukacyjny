@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Cyfrowy Odkrywca Świata</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .explorer-rank {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .level-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .level-nav-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .level-nav-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .level-nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .level-nav-btn.completed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .level-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .start-screen {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .start-screen h2 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            font-size: 1.2em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .start-btn, .next-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .start-btn:hover, .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .level-icon {
+            font-size: 6em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .level-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            line-height: 1.6;
+        }
+
+        .digital-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .digital-title {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .answer-btn {
+            display: block;
+            width: 100%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .answer-btn:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .answer-btn.correct {
+            background: #d4edda;
+            border-color: #4CAF50;
+            color: #155724;
+        }
+
+        .answer-btn.incorrect {
+            background: #f8d7da;
+            border-color: #f44336;
+            color: #721c24;
+        }
+
+        .question-hint {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+            display: none;
+        }
+
+        .retry-message {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+            display: none;
+        }
+
+        .reward-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .reward-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .reward-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .celebration {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .certificate {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 3px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .digital-helper-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .digital-helper-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 10px;
+            }
+            
+            .level-title {
+                font-size: 2em;
+            }
+
+            .level-navigation {
+                gap: 4px;
+            }
+
+            .level-nav-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .start-screen {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Digital Elements Background -->
+    <div class="floating-elements" id="floatingElements"></div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>🌍 Cyfrowy Odkrywca Świata</h1>
+            <div class="explorer-rank" id="explorerRank">
+                <span>🌱</span>
+                <span>Cyfrowy Początkujący</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="level-navigation" id="levelNavigation">
+                <!-- Dynamic navigation buttons -->
+            </div>
+        </div>
+
+        <div class="content" id="gameContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <button class="digital-helper-btn" onclick="showHelper()">🤖 Pomoc</button>
+
+    <!-- Reward Popup -->
+    <div class="reward-popup" id="rewardPopup">
+        <div class="reward-icon" id="rewardIcon">🎉</div>
+        <h2 id="rewardTitle" style="color: #667eea; margin-bottom: 15px;">Poziom Ukończony!</h2>
+        <p id="rewardText" style="font-size: 1.3em; margin-bottom: 20px;"></p>
+        <p id="rewardSubText" style="color: #666; margin-bottom: 25px;"></p>
+        <div id="rewardButtons"></div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // Game state
+        let currentLevel = 0;
+        let completedLevels = [];
+        let questionsAnswered = 0;
+        let totalQuestions = 0;
+        let explorerRank = 'Cyfrowy Początkujący';
+        let questionAttempts = {};
+        let gameStats = {
+            startTime: new Date(),
+            correctAnswers: 0,
+            totalAttempts: 0,
+            timeSpent: 0,
+            finalTestAttempts: 0
+        };
+
+        // Explorer ranks based on progress
+        const explorerRanks = [
+            { min: 0, max: 0, name: "🌱 Cyfrowy Początkujący", icon: "🌱" },
+            { min: 1, max: 2, name: "🔍 Skaut Wyszukiwania", icon: "🔍" },
+            { min: 3, max: 4, name: "🛡️ Specjalista Bezpieczeństwa", icon: "🛡️" },
+            { min: 5, max: 6, name: "🌐 Wędrowiec Sieci", icon: "🌐" },
+            { min: 7, max: 8, name: "💡 Cyfrowy Detektyw", icon: "💡" },
+            { min: 9, max: 10, name: "🏆 Kapitan Treści", icon: "🏆" },
+            { min: 11, max: 11, name: "🌟 Mistrz Cyfrowego Świata", icon: "🌟" }
+        ];
+
+        // Level data
+        const levels = [
+            {
+                id: 1,
+                title: "Bohater Wyszukiwania",
+                icon: "🔍",
+                color: "#E74C3C",
+                badge: "Uczony Wyszukiwania",
+                explanation: `<strong>🔍 Zostajesz bohaterem wyszukiwania!</strong><br>
+                Musisz przygotować prezentację o słoniach. Będziesz szukać w internecie, ale nie wszystkie strony internetowe mają dobre informacje! Niektóre strony wymyślają rzeczy. Nauczysz się jak znajdować prawdziwe informacje!
+                <br><br>
+                <strong>✅ Dobre strony:</strong> Wikipedia, portale edukacyjne, strony szkolne.
+                <br><strong>❌ Ostrożnie z:</strong> Strony sprzedażowe, blogi nieznanych osób.`,
+                questions: [
+                    {
+                        question: "Szukasz informacji o słoniach do prezentacji. Która strona jest najbardziej wiarygodna?",
+                        answers: [
+                            { text: "🛒 Strona, która sprzedaje pluszowe słonie", correct: false },
+                            { text: "📚 Wikipedia o słoniach", correct: true },
+                            { text: "💬 Blog kogoś, kto raz widział słonia", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego Wikipedia jest zazwyczaj wiarygodna do projektów szkolnych?",
+                        answers: [
+                            { text: "🎨 Ponieważ ma ładne zdjęcia", correct: false },
+                            { text: "👥 Ponieważ wielu ekspertów sprawdza informacje", correct: true },
+                            { text: "💰 Ponieważ jest darmowa", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Potwór Ciasteczek",
+                icon: "🍪",
+                color: "#3498DB",
+                badge: "Ochroniarz Prywatności",
+                explanation: `<strong>🍪 Ciasteczka to nie są do jedzenia!</strong><br>
+                Strony internetowe dają twojemu komputerowi małe pliki (cookies) żeby pamiętać kim jesteś. Niektóre są przydatne, inne śledzą cię wszędzie!
+                <br><br>
+                <strong>✅ Dobre ciasteczka:</strong> Pamiętanie danych logowania.
+                <br><strong>⚠️ Irytujące ciasteczka:</strong> Śledzenie gdzie klikasz dla reklam.`,
+                questions: [
+                    {
+                        question: "Strona pyta czy chcesz zaakceptować ciasteczka. Co robisz?",
+                        answers: [
+                            { text: "✅ Akceptuję wszystko - to łatwiejsze", correct: false },
+                            { text: "⚙️ Akceptuję tylko niezbędne ciasteczka", correct: true },
+                            { text: "❌ Nie akceptuję nic wcale", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego strony chcą ci dać ciasteczka?",
+                        answers: [
+                            { text: "🎁 Żeby być miłe", correct: false },
+                            { text: "📊 Żeby pamiętać co robisz i pokazywać reklamy", correct: true },
+                            { text: "🍪 Ponieważ są smakowite", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Detektyw Reklam",
+                icon: "📺",
+                color: "#F39C12",
+                badge: "Tropiciel Reklam",
+                explanation: `<strong>📺 Reklamy są wszędzie!</strong><br>
+                Na YouTube, w grach, na stronach - wszędzie firmy próbują ci coś sprzedać. Jako prawdziwy detektyw nauczysz się rozpoznawać reklamy!
+                <br><br>
+                <strong>🕵️ Rozpoznawanie reklam:</strong> Jest napisane 'Reklama', 'Sponsorowane' lub 'Ad'.`,
+                questions: [
+                    {
+                        question: "Widzisz film na YouTube o 'NAJLEPSZYM TELEFONIE W HISTORII!' Co myślisz?",
+                        answers: [
+                            { text: "📱 To musi być prawda!", correct: false },
+                            { text: "🤔 To prawdopodobnie reklama żeby sprzedać telefony", correct: true },
+                            { text: "🎬 To po prostu zabawny film", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Jak rozpoznasz reklamę w internecie?",
+                        answers: [
+                            { text: "🎨 Po ładnych kolorach", correct: false },
+                            { text: "🏷️ Jest napisane 'Reklama' lub 'Sponsorowane'", correct: true },
+                            { text: "📢 Kiedy brzmi bardzo głośno", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Strażnik Gier",
+                icon: "🎮",
+                color: "#9B59B6",
+                badge: "Bezpieczny Gracz",
+                explanation: `<strong>🎮 Bezpieczne granie to super sprawa!</strong><br>
+                W grach online możesz rozmawiać z innymi graczami. Ale nie wszyscy są mili. Nauczysz się jak grać bezpiecznie i fajnie!
+                <br><br>
+                <strong>🛡️ Bezpieczne granie:</strong> Rozmawiaj tylko o grze, nie podawaj danych osobowych.`,
+                questions: [
+                    {
+                        question: "W grze ktoś pyta gdzie mieszkasz. Co odpowiadasz?",
+                        answers: [
+                            { text: "🏠 Mieszkam w [twoje miasto]", correct: false },
+                            { text: "🎮 Porozmawiajmy o grze!", correct: true },
+                            { text: "🤐 Nic nie mówię", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego ważne jest żeby w grach rozmawiać tylko o grze?",
+                        answers: [
+                            { text: "🎯 Żeby gra była fajniejsza", correct: false },
+                            { text: "🛡️ Dla twojego bezpieczeństwa - nie wiesz kim naprawdę są ci ludzie", correct: true },
+                            { text: "🤖 Ponieważ komputer tego chce", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Ochroniarz Telefonu",
+                icon: "📱",
+                color: "#1ABC9C",
+                badge: "Obrońca Urządzeń",
+                explanation: `<strong>📱 Cudzy telefon = ostrożnie!</strong><br>
+                Czasami możesz używać telefonu lub tabletu kogoś innego. Ale nie możesz dotykać wszystkiego!
+                <br><br>
+                <strong>✅ W porządku:</strong> Graj w grę, którą ci pokazali.
+                <br><strong>❌ Nie w porządku:</strong> Czytanie wiadomości, przeglądanie zdjęć, zmienianie ustawień.`,
+                questions: [
+                    {
+                        question: "Możesz używać iPada babci. Czego NIE robisz?",
+                        answers: [
+                            { text: "🎮 Gram w grę, którą mi pokazała", correct: false },
+                            { text: "📸 Patrzę na jej zdjęcia", correct: true },
+                            { text: "🎵 Słucham muzyki", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego ważne jest żeby nie zaglądać do cudzych wiadomości?",
+                        answers: [
+                            { text: "📱 Ponieważ telefon się zepsuje", correct: false },
+                            { text: "🤐 Ponieważ każdy ma prawo do prywatności", correct: true },
+                            { text: "🎮 Ponieważ wtedy nie możesz grać", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Kapitan YouTube",
+                icon: "🤖",
+                color: "#E67E22",
+                badge: "Dowódca Treści",
+                explanation: `<strong>🤖 YouTube decyduje co widzisz!</strong><br>
+                YouTube patrzy na co klikasz i wtedy pokazuje ci więcej tego samego. Ale ty jesteś szefem tego co oglądasz!
+                <br><br>
+                <strong>🎯 Ty decydujesz:</strong> Szukaj sam ciekawych filmów zamiast tylko klikać to co YouTube proponuje.`,
+                questions: [
+                    {
+                        question: "YouTube ciągle pokazuje straszne filmy. Co możesz zrobić?",
+                        answers: [
+                            { text: "😰 Po prostu oglądać dalej", correct: false },
+                            { text: "🔍 Szukać samemu fajnych filmów", correct: true },
+                            { text: "📱 Odłożyć telefon", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego YouTube czasami pokazuje te same typy filmów?",
+                        answers: [
+                            { text: "🤖 YouTube patrzy na co klikasz i myśli że ci się to podoba", correct: true },
+                            { text: "🎮 Ponieważ są tylko takie filmy", correct: false },
+                            { text: "👥 Ponieważ wszystkie dzieci to oglądają", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                title: "Fałszywy Detektyw",
+                icon: "🕵️",
+                color: "#2ECC71",
+                badge: "Poszukiwacz Prawdy",
+                explanation: `<strong>🕵️ Nie wszystko w internecie jest prawdziwe!</strong><br>
+                Ludzie mogą robić fałszywe zdjęcia, pisać nieprawdziwe historie lub robić żarty. Ty zostaniesz detektywem, który widzi różnicę!
+                <br><br>
+                <strong>🤔 Zapytaj siebie:</strong> Czy to brzmi logicznie? Czy inne strony też to mają?`,
+                questions: [
+                    {
+                        question: "Widzisz zdjęcie tęczowego jednorożca w waszym ogrodzie. Co myślisz?",
+                        answers: [
+                            { text: "🦄 Wow, jednorożce naprawdę istnieją!", correct: false },
+                            { text: "🤔 To wygląda na fałszywe - jednorożce nie istnieją", correct: true },
+                            { text: "📸 Też pójdę robić zdjęcia", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Jak sprawdzasz czy coś jest prawdziwe?",
+                        answers: [
+                            { text: "🎮 Pytam w grze", correct: false },
+                            { text: "🔍 Szukam w Google czy inne strony też to mają", correct: true },
+                            { text: "📱 Po prostu wierzę", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 8,
+                title: "Strażnik Informacji",
+                icon: "📊",
+                color: "#34495E",
+                badge: "Profesjonalista Prywatności",
+                explanation: `<strong>📊 Twoje informacje są cenne!</strong><br>
+                Strony czasami pytają o twoje imię, wiek, adres. Ale dlaczego? Niektóre strony naprawdę tego potrzebują, inne nie!
+                <br><br>
+                <strong>🛡️ Zasada:</strong> Podawaj prawdziwe informacje tylko za zgodą rodziców.`,
+                questions: [
+                    {
+                        question: "Strona z grami prosi o twoje prawdziwe imię i adres. Co robisz?",
+                        answers: [
+                            { text: "✍️ Wpisuję - przecież pytają", correct: false },
+                            { text: "🤔 Najpierw pytam dlaczego tego potrzebują", correct: true },
+                            { text: "🎮 Po prostu wymyślam fałszywe imię", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego strony czasami chcą znać twoje prawdziwe imię?",
+                        answers: [
+                            { text: "🎁 Żeby wysłać ci niespodzianki", correct: false },
+                            { text: "📊 Żeby używać twoich danych do reklam lub innych celów", correct: true },
+                            { text: "🤖 Ponieważ komputery tego potrzebują", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 9,
+                title: "Kontroler Treści",
+                icon: "📺",
+                color: "#8E44AD",
+                badge: "Mądry Oglądacz",
+                explanation: `<strong>📺 Ty jesteś szefem tego co oglądasz!</strong><br>
+                Czasami widzisz rzeczy, które są straszne, smutne lub nieprzyjemne. To nie twoja wina! Zawsze możesz przestać oglądać.
+                <br><br>
+                <strong>🛡️ Pamiętaj:</strong> Jeśli coś ci sprawia strach lub smutek, przestań oglądać.`,
+                questions: [
+                    {
+                        question: "Oglądasz film i robi ci się strach. Co robisz?",
+                        answers: [
+                            { text: "⏸️ Przestaję oglądać i szukam czegoś innego", correct: true },
+                            { text: "😰 Oglądam dalej bo już zacząłem", correct: false },
+                            { text: "👀 Patrzę przez palce", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Skąd wiesz czy film jest odpowiedni dla ciebie?",
+                        answers: [
+                            { text: "🏷️ Patrzę na oznaczenie wieku", correct: true },
+                            { text: "🎨 Jeśli ma ładne kolory", correct: false },
+                            { text: "⭐ Jeśli ma dużo gwiazdek", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 10,
+                title: "Strażnik Pieniędzy",
+                icon: "💰",
+                color: "#E91E63",
+                badge: "Mistrz Pieniędzy",
+                explanation: `<strong>💰 Gry chcą twoich pieniędzy!</strong><br>
+                W aplikacjach i grach czasami widzisz: 'Kup monety!' lub 'Zdobądź supermoce za 2,99 zł!' To są zakupy w aplikacji. Wydają się tanie, ale szybko się sumują!
+                <br><br>
+                <strong>🎮 Zasada:</strong> Nigdy nie kupuj bez zgody rodziców!`,
+                questions: [
+                    {
+                        question: "Grasz w darmową grę i widzisz: 'Kup 100 diamentów za 0,99 zł!' Co robisz?",
+                        answers: [
+                            { text: "💎 Kupuję, to tylko 99 groszy", correct: false },
+                            { text: "👨‍👩‍👧 Najpierw pytam rodziców", correct: true },
+                            { text: "🎮 Gram dalej bez kupowania", correct: false }
+                        ]
+                    },
+                    {
+                        question: "Dlaczego wiele gier jest 'darmowych' do pobrania?",
+                        answers: [
+                            { text: "🎁 Ponieważ twórcy są mili", correct: false },
+                            { text: "💰 Zarabiają pieniądze gdy później kupujesz rzeczy w grze", correct: true },
+                            { text: "🎮 Ponieważ robienie gier nic nie kosztuje", correct: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Initialize game
+        function initGame() {
+            generateFloatingElements();
+            showStartScreen();
+            updateLevelNavigation();
+            updateExplorerRank();
+            
+            // Load saved progress
+            const saved = localStorage.getItem('cyfrowy-odkrywca-postep');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                completedLevels = progress.completed || [];
+                currentLevel = progress.current || 0;
+                explorerRank = progress.rank || 'Cyfrowy Początkujący';
+                gameStats = { ...gameStats, ...progress.stats };
+                updateExplorerRank();
+            }
+        }
+
+        function generateFloatingElements() {
+            const elementsContainer = document.getElementById('floatingElements');
+            const digitalIcons = ['🔍', '🍪', '📺', '🎮', '📱', '🤖', '🕵️', '📊', '💰', '🆘', '🌍'];
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = digitalIcons[Math.floor(Math.random() * digitalIcons.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 8 + 's';
+                element.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                elementsContainer.appendChild(element);
+            }
+        }
+
+        function showStartScreen() {
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="start-screen">
+                    <div style="font-size: 6em; margin-bottom: 30px;">🌍🚀✨</div>
+                    <h2>Witaj Cyfrowy Odkrywco Świata!</h2>
+                    <p>Zostań prawdziwym cyfrowym podróżnikiem! Naucz się jak mądrze, bezpiecznie i świadomie poruszać się po cyfrowym świecie. Od wyszukiwania w internecie po bezpieczne granie - zostaniesz panem technologii!</p>
+                    <p>🎯 <strong>Misja:</strong> Ukończ wszystkie ${levels.length} poziomów i zostań Mistrzem Cyfrowego Świata!</p>
+                    <button class="start-btn" onclick="startGame()">🚀 Zacznij Podróż Odkrywczą!</button>
+                    ${completedLevels.length > 0 ? `<br><button class="next-btn" onclick="continueGame()">📖 Kontynuuj gdzie skończyłem</button>` : ''}
+                </div>
+            `;
+        }
+
+        function startGame() {
+            currentLevel = 1;
+            questionsAnswered = 0;
+            gameStats.startTime = new Date();
+            showLevel(1);
+        }
+
+        function continueGame() {
+            if (completedLevels.length === levels.length) {
+                showCelebration();
+            } else {
+                showLevel(completedLevels.length + 1);
+            }
+        }
+
+        function showLevel(levelNum) {
+            currentLevel = levelNum;
+            const level = levels[levelNum - 1];
+            questionsAnswered = 0;
+            totalQuestions = level.questions.length;
+            questionAttempts = {};
+            
+            updateProgress();
+            updateLevelNavigation();
+            
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="level-icon" style="color: ${level.color}">${level.icon}</div>
+                <h2 class="level-title" style="color: ${level.color}">Poziom ${level.id}: ${level.title}</h2>
+                
+                <div class="explanation" style="border-left-color: ${level.color}">
+                    ${level.explanation}
+                </div>
+
+                <div class="digital-section">
+                    <h3 class="digital-title">🧠 Przetestuj swoją cyfrową wiedzę!</h3>
+                    ${level.questions.map((q, index) => `
+                        <div class="question" id="question-${index}">
+                            <h3>Pytanie ${index + 1}: ${q.question}</h3>
+                            ${q.answers.map((answer, answerIndex) => `
+                                <button class="answer-btn" onclick="checkAnswer(this, ${answer.correct}, ${index})">${answer.text}</button>
+                            `).join('')}
+                            <div class="question-hint" id="hint-${index}">
+                                <strong>💡 Wskazówka:</strong> ${getHintForQuestion(q.question)}
+                            </div>
+                            <div class="retry-message" id="retry-${index}">
+                                🌟 Spróbuj ponownie! Zostaniesz prawdziwym cyfrowym odkrywcą!
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkAnswer(button, isCorrect, questionIndex) {
+            const question = document.getElementById(`question-${questionIndex}`);
+            const buttons = question.querySelectorAll('.answer-btn');
+            const hint = document.getElementById(`hint-${questionIndex}`);
+            const retry = document.getElementById(`retry-${questionIndex}`);
+            
+            // Track attempts
+            if (!questionAttempts[questionIndex]) {
+                questionAttempts[questionIndex] = 0;
+            }
+            questionAttempts[questionIndex]++;
+            gameStats.totalAttempts++;
+            
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                gameStats.correctAnswers++;
+                questionsAnswered++;
+                
+                // Check if level is complete
+                if (questionsAnswered === totalQuestions) {
+                    completedLevels.push(currentLevel);
+                    saveProgress();
+                    updateExplorerRank();
+                    
+                    setTimeout(() => {
+                        if (currentLevel === levels.length) {
+                            showCelebration();
+                        } else {
+                            showReward();
+                        }
+                    }, 1000);
+                }
+            } else {
+                button.classList.add('incorrect');
+                
+                // Show hint after first wrong answer
+                if (questionAttempts[questionIndex] === 1) {
+                    hint.style.display = 'block';
+                }
+                
+                // Show retry message and re-enable buttons after 2 seconds
+                retry.style.display = 'block';
+                setTimeout(() => {
+                    buttons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.classList.remove('incorrect');
+                    });
+                    retry.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function getHintForQuestion(questionText) {
+            const hints = {
+                "informacje o słoniach": "Strony które sprzedają informacje często chcą czegoś od ciebie - prawdziwe strony informacyjne jak Wikipedia są za darmo.",
+                "ciasteczka": "Akceptuj tylko te ciasteczka, które są naprawdę potrzebne stronie - nie wszystkie śledzące cookies.",
+                "NAJLEPSZYM TELEFONIE": "Jeśli coś brzmi zbyt dobrze żeby było prawdziwe, to prawdopodobnie jest reklamą.",
+                "gdzie mieszkasz": "W grach rozmawiasz tylko o grze - nigdy o rzeczach osobistych.",
+                "iPada babci": "Szanuj prywatność innych - rób tylko to na co masz pozwolenie.",
+                "straszne filmy": "Ty decydujesz co oglądasz - szukaj sam fajnych filmów.",
+                "tęczowego jednorożca": "Jeśli coś brzmi zbyt szalone żeby było prawdziwe, prawdopodobnie nie jest.",
+                "prawdziwe imię i adres": "Zapytaj siebie: dlaczego ta gra potrzebuje mojego prawdziwego adresu?",
+                "robi ci się strach": "Ty jesteś szefem tego co oglądasz - jeśli coś jest straszne, możesz zawsze przestać.",
+                "100 diamentów za 0,99 zł": "Czyje pieniądze byś wydawał? Zawsze najpierw pytaj rodziców."
+            };
+            
+            for (let key in hints) {
+                if (questionText.toLowerCase().includes(key)) {
+                    return hints[key];
+                }
+            }
+            return "Pomyśl dobrze o tym czego nauczyłeś się w tym poziomie!";
+        }
+
+        function showReward() {
+            const level = levels[currentLevel - 1];
+            const firstTryCorrect = Object.values(questionAttempts).filter(attempts => attempts === 1).length;
+            const badgeEarned = firstTryCorrect === totalQuestions;
+            
+            document.getElementById('rewardIcon').textContent = badgeEarned ? '🏆' : '🎉';
+            document.getElementById('rewardTitle').textContent = badgeEarned ? 'Poziom Opanowany! 🎉' : 'Poziom Ukończony!';
+            
+            if (badgeEarned) {
+                document.getElementById('rewardText').innerHTML = `Zdobyłeś odznakę "${level.badge}"! ${level.icon}`;
+                document.getElementById('rewardSubText').innerHTML = `Super! Zrozumiałeś ${firstTryCorrect} z ${totalQuestions} pytań od razu dobrze!`;
+            } else {
+                document.getElementById('rewardText').innerHTML = `Ukończyłeś poziom ${currentLevel}! 🎯`;
+                document.getElementById('rewardSubText').innerHTML = `Dużo się nauczyłeś! Spróbuj następnym razem odpowiedzieć na pytania za pierwszym razem żeby zdobyć odznakę.`;
+            }
+            
+            document.getElementById('rewardButtons').innerHTML = `
+                <button class="next-btn" onclick="closeReward(); showLevel(${currentLevel + 1});">🚀 Do Poziomu ${currentLevel + 1}!</button>
+                <br><button class="next-btn" onclick="closeReward(); showStartScreen();">🏠 Powrót do Startu</button>
+            `;
+            
+            document.getElementById('rewardPopup').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function showCelebration() {
+            gameStats.timeSpent = Math.round((new Date() - gameStats.startTime) / 60000);
+            const accuracy = Math.round((gameStats.correctAnswers / gameStats.totalAttempts) * 100);
+            
+            explorerRank = "🌟 Mistrz Cyfrowego Świata";
+            saveProgress();
+            updateExplorerRank();
+            
+            // Notify parent window of completion
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'moduleCompleted',
+                    module: 'cyfrowy-odkrywca-swiata',
+                    moduleName: 'Cyfrowy Odkrywca Świata'
+                }, '*');
+            }
+            
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="celebration">
+                    <div style="font-size: 6em; margin-bottom: 30px;">🎉🌍🎉</div>
+                    <h2 style="color: #667eea; font-size: 3em; margin-bottom: 30px;">GRATULACJE!</h2>
+                    
+                    <div class="certificate">
+                        <h3 style="font-size: 2.5em; margin-bottom: 20px;">🌟 CERTYFIKAT MISTRZA CYFROWEGO ŚWIATA 🌟</h3>
+                        <p style="font-size: 1.5em; margin-bottom: 15px;">Ten certyfikat zostaje przyznany:</p>
+                        <h2 style="font-size: 2em; margin-bottom: 20px;">Cyfrowy Odkrywca Świata</h2>
+                        <p style="font-size: 1.2em;">Za pomyślne ukończenie wszystkich poziomów cyfrowej edukacji<br>
+                        i zdobycie statusu Mistrza Cyfrowego Świata!</p>
+                        <p style="margin-top: 20px; font-size: 1em;">🌍 Jesteś teraz prawdziwym cyfrowym podróżnikiem! 🌍</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-around; margin: 30px 0;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2em; font-weight: bold; color: #667eea;">${completedLevels.length}/10</div>
+                            <div>Poziomów Ukończonych</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2em; font-weight: bold; color: #667eea;">${accuracy}%</div>
+                            <div>Dokładność</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2em; font-weight: bold; color: #667eea;">${gameStats.timeSpent}</div>
+                            <div>Minut Gry</div>
+                        </div>
+                    </div>
+
+                    <button class="start-btn" onclick="showStartScreen()">🏠 Powrót do Startu</button>
+                </div>
+            `;
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progress = (completedLevels.length / levels.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        function updateLevelNavigation() {
+            const navigation = document.getElementById('levelNavigation');
+            navigation.innerHTML = levels.map((level, index) => {
+                const levelNum = index + 1;
+                const isCompleted = completedLevels.includes(levelNum);
+                const isActive = levelNum === currentLevel;
+                const isAccessible = levelNum <= completedLevels.length + 1;
+                
+                return `<button class="level-nav-btn ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" 
+                    onclick="${isAccessible ? `showLevel(${levelNum})` : 'void(0)'}" 
+                    ${!isAccessible ? 'disabled' : ''}>
+                    ${level.icon} ${levelNum}
+                </button>`;
+            }).join('');
+        }
+
+        function updateExplorerRank() {
+            const completedCount = completedLevels.length;
+            let newRank = explorerRanks.find(rank => completedCount >= rank.min && completedCount <= rank.max);
+            
+            if (newRank) {
+                explorerRank = newRank.name;
+                document.getElementById('explorerRank').innerHTML = `
+                    <span>${newRank.icon}</span>
+                    <span>${explorerRank}</span>
+                `;
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('cyfrowy-odkrywca-postep', JSON.stringify({
+                completed: completedLevels,
+                current: currentLevel,
+                rank: explorerRank,
+                stats: gameStats
+            }));
+        }
+
+        function closeReward() {
+            document.getElementById('rewardPopup').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        function showHelper() {
+            alert('💡 Wskazówki dla Cyfrowego Odkrywcy Świata:\n\n' +
+                '🔍 Zawsze szukaj na wiarygodnych stronach\n' +
+                '🍪 Akceptuj tylko niezbędne ciasteczka\n' +
+                '📺 Rozpoznawaj reklamy po etykietach jak "Reklama"\n' +
+                '🎮 W grach rozmawiaj tylko o grze\n' +
+                '📱 Szanuj prywatność innych\n' +
+                '🤖 Ty decydujesz co oglądasz na YouTube\n' +
+                '🕵️ Pytaj siebie: czy to jest logiczne?\n' +
+                '📊 Podawaj informacje tylko za zgodą rodziców\n' +
+                '📺 Przestań oglądać jeśli coś jest straszne\n' +
+                '💰 Zawsze pytaj najpierw przed kupowaniem');
+        }
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
