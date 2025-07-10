@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕊️ Przygoda OSI - Wielka Gra Sieciowa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 80vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #4A90E2, #357ABD);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #7ED321;
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+
+        .layer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .layer-nav-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .layer-nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .layer-nav-btn.active {
+            background: #7ED321;
+            border-color: #7ED321;
+            color: white;
+        }
+
+        .layer-nav-btn.completed {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
+        .layer-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .start-screen h2 {
+            color: #4A90E2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .start-btn, .next-btn {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .start-btn:hover, .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .layer-icon {
+            font-size: 6em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .layer-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .explanation {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4A90E2;
+            line-height: 1.6;
+        }
+
+        .questions-section {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .questions-title {
+            color: #4A90E2;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4A90E2;
+        }
+
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .answer-btn {
+            display: block;
+            width: 100%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .answer-btn:hover {
+            background: #f0f0f0;
+            border-color: #4A90E2;
+        }
+
+        .answer-btn.correct {
+            background: #d4edda;
+            border-color: #4CAF50;
+            color: #155724;
+        }
+
+        .answer-btn.incorrect {
+            background: #f8d7da;
+            border-color: #f44336;
+            color: #721c24;
+        }
+
+        .reward-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .reward-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .reward-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .celebration {
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+            padding: 50px;
+            border-radius: 20px;
+        }
+
+        .certificate {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 3px solid #4A90E2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 10px;
+            margin: 10px;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4A90E2;
+        }
+
+        .layer-1 { color: #E74C3C; }
+        .layer-2 { color: #3498DB; }
+        .layer-3 { color: #F39C12; }
+        .layer-4 { color: #9B59B6; }
+        .layer-5 { color: #1ABC9C; }
+        .layer-6 { color: #E67E22; }
+        .layer-7 { color: #2ECC71; }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .layer-title {
+                font-size: 2em;
+            }
+
+            .layer-navigation {
+                gap: 5px;
+            }
+
+            .layer-nav-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🕊️ Przygoda OSI</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="layer-navigation" id="layerNavigation">
+                <!-- Dynamic navigation buttons -->
+            </div>
+        </div>
+
+        <div class="content" id="gameContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Reward Popup -->
+    <div class="reward-popup" id="rewardPopup">
+        <div class="reward-icon" id="rewardIcon">🎉</div>
+        <h2 id="rewardTitle" style="color: #4A90E2; margin-bottom: 15px;">Gratulacje!</h2>
+        <p id="rewardText" style="font-size: 1.3em; margin-bottom: 20px;"></p>
+        <p id="rewardSubText" style="color: #666; margin-bottom: 25px;"></p>
+        <div id="rewardButtons"></div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // Game state
+        let currentLayer = 0;
+        let completedLayers = [];
+        let questionsAnswered = 0;
+        let totalQuestions = 0;
+        let gameStats = {
+            startTime: new Date(),
+            correctAnswers: 0,
+            totalAttempts: 0,
+            timeSpent: 0
+        };
+
+        // Layer data - 7 OSI layers adapted for Polish
+        const layers = [
+            {
+                id: 1,
+                title: "Warstwa Fizyczna - Kable i Sygnały",
+                icon: "🔌",
+                color: "#E74C3C",
+                badge: "Ekspert Fizyczny",
+                explanation: `<strong>🔌 Witaj w warstwie fizycznej!</strong><br>
+                Nasza cyfrowa pocztówka zaczyna swoją podróż tutaj - przy prawdziwych kablach, sygnałach WiFi i portach USB! 
+                To tutaj bity (0 i 1) są zamieniane na sygnały elektryczne, światło lub fale radiowe.
+                <br><br>
+                <strong>🌟 Przykłady:</strong> Kable Ethernet, anteny WiFi, kable USB, kable światłowodowe.
+                <br><strong>📡 Wskazówka:</strong> Fizyczna = to czego można dotknąć!`,
+                questions: [
+                    {
+                        question: "🔌 Które z tych należy do warstwy fizycznej?",
+                        answers: [
+                            { text: "📧 Wysyłanie emaila", correct: false },
+                            { text: "🔌 Kabel USB", correct: true },
+                            { text: "🌐 Odwiedzanie strony internetowej", correct: false }
+                        ]
+                    },
+                    {
+                        question: "📡 Co robi warstwa fizyczna?",
+                        answers: [
+                            { text: "💬 Tłumaczy wiadomości", correct: false },
+                            { text: "⚡ Zamienia bity na sygnały elektryczne", correct: true },
+                            { text: "🗺️ Oblicza trasy", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Warstwa Łącza - Lokalne Wiadomości",
+                icon: "📦",
+                color: "#3498DB",
+                badge: "Detektyw Łącza",
+                explanation: `<strong>📦 Warstwa łącza to jak lokalny listonosz!</strong><br>
+                Ta warstwa zapewnia, że wiadomości dotrą do bezpośrednich komputerów sąsiedzkich. 
+                Dodaje adresy, aby komputery w tej samej sieci mogły się znaleźć.
+                <br><br>
+                <strong>🏠 Przykłady:</strong> Adresy MAC, ramki Ethernet, połączenia WiFi.
+                <br><strong>🏃 Wskazówka:</strong> Łącze = dostarczanie paczek do bezpośrednich sąsiadów!`,
+                questions: [
+                    {
+                        question: "📦 Dla kogo są przeznaczone paczki warstwy łącza?",
+                        answers: [
+                            { text: "🌍 Wszystkie komputery na świecie", correct: false },
+                            { text: "🏠 Tylko bezpośrednie komputery sąsiedzkie", correct: true },
+                            { text: "📱 Tylko smartfony", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🏠 Czym jest adres MAC?",
+                        answers: [
+                            { text: "🍎 Komputer Apple", correct: false },
+                            { text: "🆔 Unikalny numer dla każdej karty sieciowej", correct: true },
+                            { text: "🔐 Hasło", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Warstwa Sieciowa - Wielka Podróż",
+                icon: "🗺️",
+                color: "#F39C12",
+                badge: "Nawigator Sieciowy",
+                explanation: `<strong>🗺️ Warstwa sieciowa to jak GPS dla danych!</strong><br>
+                Tutaj decyduje się, jaką trasę powinna obrać wiadomość, aby dotrzeć z twojego komputera do komputera daleko. 
+                Adres IP jest używany tutaj - to jak adres domowy każdego komputera.
+                <br><br>
+                <strong>🌐 Przykłady:</strong> Adresy IP, routery, internet.
+                <br><strong>🗺️ Wskazówka:</strong> Sieciowa = planowanie trasy na długą podróż!`,
+                questions: [
+                    {
+                        question: "🗺️ Czym jest adres IP?",
+                        answers: [
+                            { text: "🔐 Hasło", correct: false },
+                            { text: "🏠 Adres domowy komputera", correct: true },
+                            { text: "🦠 Wirus", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🌐 Co robi router?",
+                        answers: [
+                            { text: "📺 Odtwarza filmy", correct: false },
+                            { text: "🗺️ Kieruje wiadomości we właściwym kierunku", correct: true },
+                            { text: "🔌 Naprawia kable", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Warstwa Transportowa - Niezawodna Dostawa",
+                icon: "🚛",
+                color: "#9B59B6",
+                badge: "Śledzący Transportu",
+                explanation: `<strong>🚛 Warstwa transportowa to jak niezawodna firma kurierska!</strong><br>
+                Ta warstwa zapewnia, że duże wiadomości są dzielone na mniejsze kawałki i że wszystkie kawałki dotrą. 
+                To jak dzielenie wielkiej układanki na małe kawałki do wysłania.
+                <br><br>
+                <strong>📦 Przykłady:</strong> TCP (niezawodny), UDP (szybki), numery portów.
+                <br><strong>🚛 Wskazówka:</strong> Transport = dzielenie dużych rzeczy na łatwiejsze do wysłania!`,
+                questions: [
+                    {
+                        question: "🚛 Dlaczego duże pliki są dzielone?",
+                        answers: [
+                            { text: "🔒 Dla bezpieczeństwa", correct: false },
+                            { text: "📦 Tak jest łatwiej je wysłać", correct: true },
+                            { text: "💾 Żeby zaoszczędzić miejsce", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🔢 Czym jest numer portu?",
+                        answers: [
+                            { text: "🚪 Numer twoich drzwi wejściowych", correct: false },
+                            { text: "📬 Która usługa powinna otrzymać wiadomość", correct: true },
+                            { text: "📞 Twój numer telefonu", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Warstwa Sesji - Organizowanie Rozmów",
+                icon: "🤝",
+                color: "#1ABC9C",
+                badge: "Specjalista Sesji",
+                explanation: `<strong>🤝 Warstwa sesji to jak prowadzący rozmowy!</strong><br>
+                Ta warstwa zapewnia, że rozmowy między komputerami ładnie się zaczynają, trwają i kończą. 
+                Pilnuje kto rozmawia i reguluje, kto może mówić kiedy.
+                <br><br>
+                <strong>💬 Przykłady:</strong> Logowanie, rozpoczynanie/kończenie rozmów, podział kolejek.
+                <br><strong>🤝 Wskazówka:</strong> Sesja = ładne rozpoczęcie i zakończenie rozmowy!`,
+                questions: [
+                    {
+                        question: "🤝 Co robi warstwa sesji?",
+                        answers: [
+                            { text: "💬 Organizuje rozmowy między komputerami", correct: true },
+                            { text: "🔌 Podłącza kable", correct: false },
+                            { text: "🗺️ Oblicza trasy", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🔐 Kiedy warstwa sesji jest ważna?",
+                        answers: [
+                            { text: "🎮 Przy graniu w gry online", correct: false },
+                            { text: "🔑 Przy logowaniu na strony internetowe", correct: true },
+                            { text: "📺 Przy oglądaniu filmów", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Warstwa Prezentacji - Tłumaczenie",
+                icon: "🌍",
+                color: "#E67E22",
+                badge: "Mistrz Prezentacji",
+                explanation: `<strong>🌍 Warstwa prezentacji to jak Google Translate dla komputerów!</strong><br>
+                Komputery czasami mówią różnymi 'językami' (formatami plików). Ta warstwa zapewnia, że się rozumieją poprzez tłumaczenie, szyfrowanie lub kompresję wiadomości.
+                <br><br>
+                <strong>🔄 Przykłady:</strong> Szyfrowanie, kompresja (ZIP), różne formaty plików.
+                <br><strong>🌍 Wskazówka:</strong> Prezentacja = tłumaczenie żeby wszyscy rozumieli!`,
+                questions: [
+                    {
+                        question: "🌍 Co oznacza 'prezentacja' w tej warstwie?",
+                        answers: [
+                            { text: "🎨 Że komputery się rozumieją (jak tłumaczenie)", correct: true },
+                            { text: "⚡ Że wiadomości szybko docierają", correct: false },
+                            { text: "🗺️ Że znajdowana jest trasa", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🗜️ Czym jest kompresja?",
+                        answers: [
+                            { text: "📦 Czynienie plików mniejszymi, jak pakowanie ubrań do walizki", correct: true },
+                            { text: "🔐 Szyfrowanie plików", correct: false },
+                            { text: "📤 Wysyłanie plików", correct: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                title: "Warstwa Aplikacji - Prawdziwa Wiadomość",
+                icon: "💌",
+                color: "#2ECC71",
+                badge: "Poszukiwacz Przygód Aplikacji",
+                explanation: `<strong>💌 Warstwa aplikacji to gdzie dzieje się magia!</strong><br>
+                To tutaj dzieje się prawdziwa akcja: WhatsApp, gry, oglądanie filmów. To co TY chcesz robić! 
+                Wszystkie inne warstwy współpracują, aby umożliwić tej warstwie działanie.
+                <br><br>
+                <strong>🎮 Przykłady:</strong> Wiadomości WhatsApp, filmy YouTube, gry online, email, strony internetowe.
+                <br><strong>💌 Wskazówka:</strong> Aplikacja = to co naprawdę chcesz robić z komputerem!`,
+                questions: [
+                    {
+                        question: "💌 Co się dzieje w warstwie aplikacji?",
+                        answers: [
+                            { text: "📦 Wiadomości są pakowane", correct: false },
+                            { text: "🎮💬 Prawdziwe programy jak gry i WhatsApp", correct: true },
+                            { text: "🗺️ Trasy są obliczane", correct: false }
+                        ]
+                    },
+                    {
+                        question: "🎯 Dlaczego wszystkie inne warstwy współpracują dla tej warstwy?",
+                        answers: [
+                            { text: "🎮 Żebyś mógł robić to co chcesz z komputerem", correct: true },
+                            { text: "🤖 Bo komputery to lubią", correct: false },
+                            { text: "💡 Żeby oszczędzać energię", correct: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Final test questions (mixed from all layers)
+        const finalTestQuestions = [
+            {
+                question: "🔌 Która warstwa odpowiada za fizyczne połączenie między komputerami?",
+                answers: [
+                    { text: "Warstwa fizyczna", correct: true },
+                    { text: "Warstwa aplikacji", correct: false },
+                    { text: "Warstwa sieciowa", correct: false }
+                ]
+            },
+            {
+                question: "🗺️ Czym jest adres IP?",
+                answers: [
+                    { text: "Hasło", correct: false },
+                    { text: "Adres domowy komputera", correct: true },
+                    { text: "Wirus", correct: false }
+                ]
+            },
+            {
+                question: "📦 Dla kogo są przeznaczone paczki warstwy łącza?",
+                answers: [
+                    { text: "Wszystkie komputery na świecie", correct: false },
+                    { text: "Tylko bezpośrednie komputery sąsiedzkie", correct: true },
+                    { text: "Tylko smartfony", correct: false }
+                ]
+            },
+            {
+                question: "🚛 Dlaczego duże pliki są dzielone?",
+                answers: [
+                    { text: "Dla bezpieczeństwa", correct: false },
+                    { text: "Tak jest łatwiej je wysłać", correct: true },
+                    { text: "Żeby zaoszczędzić miejsce", correct: false }
+                ]
+            },
+            {
+                question: "🎮 W której warstwie znajdziesz WhatsApp i gry?",
+                answers: [
+                    { text: "Warstwa fizyczna", correct: false },
+                    { text: "Warstwa transportowa", correct: false },
+                    { text: "Warstwa aplikacji", correct: true }
+                ]
+            }
+        ];
+
+        // Initialize game
+        function initGame() {
+            showStartScreen();
+            updateLayerNavigation();
+            
+            // Load saved progress
+            const saved = localStorage.getItem('przygoda-osi-progress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                completedLayers = progress.completed || [];
+                currentLayer = progress.current || 0;
+                gameStats = { ...gameStats, ...progress.stats };
+            }
+        }
+
+        function showStartScreen() {
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="start-screen">
+                    <div style="font-size: 6em; margin-bottom: 30px;">🕊️✨</div>
+                    <h2>Witaj w Przygodzie OSI!</h2>
+                    <p>Pomóż naszej cyfrowej pocztówce dostarczyć wiadomość przez sieć komputerową! 
+                    Odkryj jak komputery rozmawiają ze sobą w 7 magicznych warstwach.</p>
+                    <p>🎯 <strong>Cel:</strong> Ukończ wszystkie 7 warstw i zostań prawdziwym odkrywcą sieci!</p>
+                    <button class="start-btn" onclick="startGame()">🚀 Rozpocznij Przygodę!</button>
+                    ${completedLayers.length > 0 ? `<br><button class="next-btn" onclick="continueGame()">📖 Kontynuuj gdzie skończyłem</button>` : ''}
+                </div>
+            `;
+        }
+
+        function startGame() {
+            currentLayer = 1;
+            questionsAnswered = 0;
+            gameStats.startTime = new Date();
+            showLayer(1);
+        }
+
+        function continueGame() {
+            if (completedLayers.length === 7) {
+                showFinalTest();
+            } else {
+                showLayer(completedLayers.length + 1);
+            }
+        }
+
+        function showLayer(layerNum) {
+            currentLayer = layerNum;
+            const layer = layers[layerNum - 1];
+            questionsAnswered = 0;
+            totalQuestions = layer.questions.length;
+            
+            updateProgress();
+            updateLayerNavigation();
+            
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="layer-icon" style="color: ${layer.color}">${layer.icon}</div>
+                <h2 class="layer-title layer-${layer.id}" style="color: ${layer.color}">Warstwa ${layer.id}: ${layer.title}</h2>
+                
+                <div class="explanation" style="border-left-color: ${layer.color}">
+                    ${layer.explanation}
+                </div>
+
+                <div class="questions-section">
+                    <h3 class="questions-title">🧠 Przetestuj swoją wiedzę!</h3>
+                    ${layer.questions.map((q, index) => `
+                        <div class="question" id="question-${index}">
+                            <h3>Pytanie ${index + 1}: ${q.question}</h3>
+                            ${q.answers.map((answer, answerIndex) => `
+                                <button class="answer-btn" onclick="checkAnswer(this, ${answer.correct}, ${index})">${answer.text}</button>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkAnswer(button, isCorrect, questionIndex) {
+            const question = document.getElementById(`question-${questionIndex}`);
+            const buttons = question.querySelectorAll('.answer-btn');
+            
+            gameStats.totalAttempts++;
+            
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                gameStats.correctAnswers++;
+                questionsAnswered++;
+                
+                // Check if layer is complete
+                if (questionsAnswered === totalQuestions) {
+                    completedLayers.push(currentLayer);
+                    saveProgress();
+                    
+                    setTimeout(() => {
+                        if (currentLayer === 7) {
+                            showFinalTest();
+                        } else {
+                            showReward();
+                        }
+                    }, 1000);
+                }
+            } else {
+                button.classList.add('incorrect');
+                
+                // Show correct answer after 2 seconds
+                setTimeout(() => {
+                    buttons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.classList.remove('incorrect');
+                    });
+                }, 2000);
+            }
+        }
+
+        function showReward() {
+            const layer = layers[currentLayer - 1];
+            
+            document.getElementById('rewardIcon').textContent = layer.icon;
+            document.getElementById('rewardTitle').textContent = 'Warstwa Ukończona!';
+            document.getElementById('rewardText').innerHTML = `Zdobyłeś odznakę "${layer.badge}"!`;
+            
+            if (currentLayer === 7) {
+                document.getElementById('rewardSubText').innerHTML = 'Ukończyłeś wszystkie 7 warstw! Czas na test końcowy...';
+                document.getElementById('rewardButtons').innerHTML = `
+                    <button class="next-btn" onclick="closeReward(); showFinalTest();">🏆 Do Testu Końcowego!</button>
+                `;
+            } else {
+                document.getElementById('rewardSubText').innerHTML = `Wspaniale! Rozumiesz teraz warstwę ${currentLayer}. Gotowy na następne wyzwanie?`;
+                document.getElementById('rewardButtons').innerHTML = `
+                    <button class="next-btn" onclick="closeReward(); showLayer(${currentLayer + 1});">🚀 Do Warstwy ${currentLayer + 1}!</button>
+                    <br><button class="next-btn" onclick="closeReward(); showStartScreen();">🏠 Powrót do Startu</button>
+                `;
+            }
+            
+            document.getElementById('rewardPopup').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function showFinalTest() {
+            currentLayer = 8; // Special state for final test
+            updateProgress();
+            updateLayerNavigation();
+            
+            questionsAnswered = 0;
+            totalQuestions = finalTestQuestions.length;
+            
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="layer-icon">🏆</div>
+                <h2 class="layer-title" style="color: #E74C3C">🎓 Test Końcowy - Czy jesteś Ekspertem OSI?</h2>
+                
+                <div class="explanation" style="border-left-color: #E74C3C">
+                    <strong>🎯 Ostatnie wyzwanie!</strong><br>
+                    Nauczyłeś się wszystkich 7 warstw. Teraz sprawdzimy czy zostałeś prawdziwym ekspertem OSI! 
+                    Te pytania pochodzą ze wszystkich warstw pomieszanych.
+                    <br><br>
+                    <strong>💪 Powodzenia!</strong> Możesz to zrobić!
+                </div>
+
+                <div class="questions-section">
+                    <h3 class="questions-title">🧠 Test Końcowy!</h3>
+                    ${finalTestQuestions.map((q, index) => `
+                        <div class="question" id="question-${index}">
+                            <h3>Pytanie ${index + 1}: ${q.question}</h3>
+                            ${q.answers.map((answer, answerIndex) => `
+                                <button class="answer-btn" onclick="checkFinalAnswer(this, ${answer.correct}, ${index})">${answer.text}</button>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkFinalAnswer(button, isCorrect, questionIndex) {
+            const question = document.getElementById(`question-${questionIndex}`);
+            const buttons = question.querySelectorAll('.answer-btn');
+            
+            gameStats.totalAttempts++;
+            
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                gameStats.correctAnswers++;
+                questionsAnswered++;
+                
+                // Check if final test is complete
+                if (questionsAnswered === totalQuestions) {
+                    setTimeout(() => {
+                        showCelebration();
+                    }, 1000);
+                }
+            } else {
+                button.classList.add('incorrect');
+                
+                // Show correct answer after 2 seconds
+                setTimeout(() => {
+                    buttons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.classList.remove('incorrect');
+                    });
+                }, 2000);
+            }
+        }
+
+        function showCelebration() {
+            gameStats.timeSpent = Math.round((new Date() - gameStats.startTime) / 60000);
+            const accuracy = Math.round((gameStats.correctAnswers / gameStats.totalAttempts) * 100);
+            
+            // Notify parent window of completion
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'moduleCompleted',
+                    module: 'przygoda-osi',
+                    moduleName: 'Przygoda OSI'
+                }, '*');
+            }
+            
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <div class="celebration">
+                    <div style="font-size: 6em; margin-bottom: 30px;">🎉🏆🎉</div>
+                    <h2 style="color: #E74C3C; font-size: 3em; margin-bottom: 30px;">GRATULACJE!</h2>
+                    
+                    <div class="certificate">
+                        <h3 style="font-size: 2.5em; margin-bottom: 20px; color: #4A90E2;">🏆 ODKRYWCA OSI 🏆</h3>
+                        <p style="font-size: 1.5em; margin-bottom: 15px;">Ten certyfikat zostaje przyznany:</p>
+                        <h2 style="font-size: 2em; color: #4A90E2; margin-bottom: 20px;">Poszukiwacz Przygód OSI</h2>
+                        <p style="font-size: 1.2em;">Za pomyślne ukończenie wszystkich 7 warstw OSI<br>
+                        i osiągnięcie statusu eksperta!</p>
+                        <p style="margin-top: 20px; font-size: 1em;">🕊️ Jesteś teraz prawdziwym ekspertem sieci! 🕊️</p>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-number">${completedLayers.length}/7</div>
+                            <div>Warstw Ukończonych</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${accuracy}%</div>
+                            <div>Dokładność</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${gameStats.timeSpent}</div>
+                            <div>Minut Gry</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">7</div>
+                            <div>Odznak Zdobytych</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #4A90E2; margin: 30px 0 20px 0;">🎖️ Twoje Zdobyte Odznaki:</h3>
+                    <div style="font-size: 1.5em; margin-bottom: 30px;">
+                        🔌 Ekspert Fizyczny • 📦 Detektyw Łącza • 🗺️ Nawigator Sieciowy • 🚛 Śledzący Transportu • 🤝 Specjalista Sesji • 🌍 Mistrz Prezentacji • 💌 Poszukiwacz Przygód Aplikacji
+                    </div>
+
+                    <button class="start-btn" onclick="showStartScreen()">🏠 Powrót do Startu</button>
+                </div>
+            `;
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progress = (completedLayers.length / 7) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        function updateLayerNavigation() {
+            const navigation = document.getElementById('layerNavigation');
+            navigation.innerHTML = layers.map((layer, index) => {
+                const layerNum = index + 1;
+                const isCompleted = completedLayers.includes(layerNum);
+                const isActive = layerNum === currentLayer;
+                const isAccessible = layerNum <= completedLayers.length + 1;
+                
+                return `<button class="layer-nav-btn ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" 
+                    onclick="${isAccessible ? `showLayer(${layerNum})` : 'void(0)'}" 
+                    ${!isAccessible ? 'disabled' : ''}>
+                    ${layer.icon} ${layerNum}
+                </button>`;
+            }).join('') + 
+            (completedLayers.length === 7 ? 
+                `<button class="layer-nav-btn ${currentLayer === 8 ? 'active' : 'completed'}" onclick="showFinalTest()">🏆 Test</button>` : 
+                '');
+        }
+
+        function saveProgress() {
+            localStorage.setItem('przygoda-osi-progress', JSON.stringify({
+                completed: completedLayers,
+                current: currentLayer,
+                stats: gameStats
+            }));
+        }
+
+        function closeReward() {
+            document.getElementById('rewardPopup').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
