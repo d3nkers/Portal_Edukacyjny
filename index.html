@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Portal Edukacyjny - Szkoła Podstawowa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .school-info {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .modules-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .module-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .module-title {
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .module-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .module-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .module-features li {
+            padding: 8px 0;
+            font-size: 1.1em;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .module-features li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+
+        .module-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .launch-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .launch-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .launch-button:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .footer h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tech-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .demo-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .coming-soon-badge {
+            background: #7C4DFF;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .modules-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .module-card {
+                padding: 25px;
+            }
+            
+            .module-title {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 1200px) and (min-width: 769px) {
+            .modules-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .module-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Portal Edukacyjny</h1>
+            <p>Interaktywne moduły edukacyjne dla dzieci w wieku 8-10 lat</p>
+            <div class="school-info">
+                🏫 Kompatybilny z ChromeOS, Linux i Windows
+            </div>
+        </div>
+
+        <div class="modules-section">
+            <!-- Moduł 1: Podstawowy Portal Edukacyjny -->
+            <div class="module-card">
+                <div class="demo-badge">✅ DOSTĘPNY</div>
+                <div class="module-header">
+                    <div class="module-icon">🌟</div>
+                    <h2 class="module-title">Moduł 1: Podstawowy Portal</h2>
+                    <p class="module-subtitle">Pełne wprowadzenie do cyfrowej edukacji</p>
+                </div>
+
+                <ul class="module-features">
+                    <li>Cyfrowy Odkrywca Świata - 10 poziomów bezpieczeństwa online</li>
+                    <li>Przygoda OSI - 7 warstw edukacji sieciowej</li>
+                    <li>Akademia Cyfrowa - 5 lekcji podstaw komputerowych</li>
+                    <li>Interaktywne quizy i odznaki</li>
+                    <li>Śledzenie postępów na komputerze</li>
+                </ul>
+
+                <div class="module-stats">
+                    <div class="stat">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Pod-moduły</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">22</div>
+                        <div class="stat-label">Lekcje</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">60+</div>
+                        <div class="stat-label">Minut</div>
+                    </div>
+                </div>
+
+                <button class="launch-button" onclick="uruchomModul1()">
+                    🚀 Uruchom Podstawowy Portal
+                </button>
+            </div>
+
+            <!-- Moduł 2: Akademia Cyfrowa Pro -->
+            <div class="module-card">
+                <div class="demo-badge">✅ DOSTĘPNY</div>
+                <div class="module-header">
+                    <div class="module-icon">🎓</div>
+                    <h2 class="module-title">Moduł 2: Akademia Cyfrowa Pro</h2>
+                    <p class="module-subtitle">Rozszerzone szkolenie Cyfrowych Strażników</p>
+                </div>
+
+                <ul class="module-features">
+                    <li>Pełne doświadczenie RPG Cyfrowych Strażników</li>
+                    <li>5 misji podstaw komputerowych z fabułą</li>
+                    <li>Rozszerzony system odznak i rang</li>
+                    <li>Od Cyfrowego Nowicjusza do Cyfrowej Legendy</li>
+                    <li>Funkcja resetowania demo dla prezentacji</li>
+                </ul>
+
+                <div class="module-stats">
+                    <div class="stat">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Misje</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Pytania Quiz</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">45+</div>
+                        <div class="stat-label">Minut</div>
+                    </div>
+                </div>
+
+                <button class="launch-button" onclick="uruchomModul2()">
+                    🚀 Uruchom Akademię Cyfrową Pro
+                </button>
+            </div>
+
+            <!-- Moduł 3: Studio Cyfrowego Twórcy -->
+            <div class="module-card" style="background: linear-gradient(135deg, #f8f4ff, #e8f5e8); border-left: 5px solid #7C4DFF;">
+                <div class="coming-soon-badge">🚧 Q3 2024</div>
+                <div class="module-header">
+                    <div class="module-icon">🎨</div>
+                    <h2 class="module-title" style="color: #4A148C;">Moduł 3: Studio Cyfrowego Twórcy</h2>
+                    <p class="module-subtitle" style="color: #6A1B9A;">Zostań cyfrowym twórcą i innowatorem</p>
+                </div>
+
+                <ul class="module-features">
+                    <li>Akademia Kodowania Junior - Programowanie dla początkujących</li>
+                    <li>Warsztat Sztuki Cyfrowej - Rysowanie i projektowanie</li>
+                    <li>Laboratorium Twórcy Wideo - Tworzenie własnych treści</li>
+                    <li>Akademia Budowniczego Stron - Budowanie stron internetowych</li>
+                    <li>Plac Zabaw AI - Zapoznanie się z narzędziami AI</li>
+                </ul>
+
+                <div class="module-stats">
+                    <div class="stat">
+                        <div class="stat-number" style="color: #7C4DFF;">5</div>
+                        <div class="stat-label">Studia</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" style="color: #7C4DFF;">25+</div>
+                        <div class="stat-label">Projekty</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" style="color: #7C4DFF;">90+</div>
+                        <div class="stat-label">Minut</div>
+                    </div>
+                </div>
+
+                <button class="launch-button" onclick="nadchodzacyModul3()" style="background: linear-gradient(135deg, #7C4DFF, #512DA8); color: white;">
+                    🎨 Wkrótce Q3 2024
+                </button>
+            </div>
+
+            <!-- Społeczność i Zasoby -->
+            <div class="module-card" style="background: linear-gradient(135deg, #fff3e0, #fce4ec); border-left: 5px solid #FF6F00;">
+                <div class="demo-badge" style="background: #FF6F00;">📚 ZASOBY</div>
+                <div class="module-header">
+                    <div class="module-icon">🌈</div>
+                    <h2 class="module-title" style="color: #E65100;">Społeczność i Rozszerzenia</h2>
+                    <p class="module-subtitle" style="color: #F57F17;">Dla nauczycieli, rodziców i programistów</p>
+                </div>
+
+                <ul class="module-features">
+                    <li>📖 Podręcznik nauczyciela i materiały lekcyjne</li>
+                    <li>🎯 Mapowanie programu nauczania (polskie standardy)</li>
+                    <li>🔧 Przewodnik dostosowania dla szkół</li>
+                    <li>🌍 Forum społeczności i feedback</li>
+                    <li>📊 Wskazówki dotyczące śledzenia postępów</li>
+                </ul>
+
+                <div class="module-stats">
+                    <div class="stat">
+                        <div class="stat-number" style="color: #FF6F00;">100%</div>
+                        <div class="stat-label">Open Source</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" style="color: #FF6F00;">3</div>
+                        <div class="stat-label">Platformy</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" style="color: #FF6F00;">8-10</div>
+                        <div class="stat-label">Wiek</div>
+                    </div>
+                </div>
+
+                <button class="launch-button" onclick="pokazZasoby()" style="background: linear-gradient(135deg, #FF6F00, #F57C00);">
+                    📚 Zobacz Zasoby
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🛠️ Informacje Techniczne</h3>
+            <div class="tech-info">
+                <div class="tech-item">
+                    <strong>💻 Kompatybilność</strong><br>
+                    Wszystkie nowoczesne przeglądarki na ChromeOS, Linux, Windows i macOS
+                </div>
+                <div class="tech-item">
+                    <strong>🌐 Wdrożenie</strong><br>
+                    GitHub Pages dla dostępu online, pliki lokalne do użytku offline
+                </div>
+                <div class="tech-item">
+                    <strong>💾 Przechowywanie Danych</strong><br>
+                    Postęp zapisywany lokalnie na przeglądarkę/komputer
+                </div>
+                <div class="tech-item">
+                    <strong>📚 Oferta Treści</strong><br>
+                    Moduł 1 i 2 dostępne, Moduł 3 (Studio Cyfrowego Twórcy) w opracowaniu
+                </div>
+            </div>
+            <p style="margin-top: 20px; color: #666;">
+                📧 W razie pytań lub opinii: Skontaktuj się poprzez GitHub Issues
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function uruchomModul1() {
+            // Sprawdź, czy jesteśmy na GitHub Pages
+            if (window.location.hostname.includes('github.io')) {
+                // Przejdź do podkatalogu module1
+                window.location.href = './modul1-podstawowy/';
+            } else {
+                // Dla lokalnego rozwoju, spróbuj względnej ścieżki
+                window.location.href = './modul1-podstawowy/index.html';
+            }
+        }
+
+        function uruchomModul2() {
+            // Sprawdź, czy jesteśmy na GitHub Pages
+            if (window.location.hostname.includes('github.io')) {
+                // Przejdź do podkatalogu module2
+                window.location.href = './modul2-akademia/';
+            } else {
+                // Dla lokalnego rozwoju, spróbuj względnej ścieżki
+                window.location.href = './modul2-akademia/index.html';
+            }
+        }
+
+        function pokazZasoby() {
+            alert('📚 Społeczność i Zasoby\n\n' +
+                  '🎓 Dla Nauczycieli:\n' +
+                  '• Plany lekcji i mapowanie programu nauczania\n' +
+                  '• Podręcznik śledzenia postępów\n' +
+                  '• Instrukcje konfiguracji klasy\n\n' +
+                  '👨‍👩‍👧‍👦 Dla Rodziców:\n' +
+                  '• Przewodnik użytkowania w domu\n' +
+                  '• Informacje o bezpieczeństwie i prywatności\n' +
+                  '• Zrozumienie postępów\n\n' +
+                  '🔧 Dla Programistów:\n' +
+                  '• Repozytorium GitHub\n' +
+                  '• Przewodnik dostosowania\n' +
+                  '• Wkład społeczności\n\n' +
+                  '📧 Kontakt: GitHub Issues dla pytań\n' +
+                  '🌍 Całkowicie open source i darmowe!');
+        }
+
+        function nadchodzacyModul3() {
+            alert('🎨 Moduł 3: Studio Cyfrowego Twórcy\n\n' +
+                  '📅 Oczekiwana data wydania: Q3 2024\n\n' +
+                  '✨ Funkcje w opracowaniu:\n' +
+                  '• Akademia Kodowania Junior - Programowanie w stylu Scratch\n' +
+                  '• Warsztat Sztuki Cyfrowej - Pixel art i rysowanie cyfrowe\n' +
+                  '• Laboratorium Twórcy Wideo - Stop-motion i podstawy edycji\n' +
+                  '• Akademia Budowniczego Stron - HTML/CSS dla dzieci\n' +
+                  '• Plac Zabaw AI - ChatGPT, DALL-E dla dzieci\n\n' +
+                  '🎯 Skupienie: Od konsumenta do twórcy!\n\n' +
+                  '📧 Chcesz otrzymać powiadomienie? Śledź repozytorium GitHub!');
+        }
+
+        // Analityka (opcjonalnie, dla GitHub Pages)
+        if (window.location.hostname.includes('github.io')) {
+            console.log('📊 Wykryto wdrożenie GitHub Pages');
+            // Tutaj możesz dodać ewentualną analitykę
+        }
+
+        // Wiadomość powitalna
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎓 Portal Edukacyjny załadowany!');
+            console.log('🌟 Moduł 1: Dostępny - Podstawowy Portal');
+            console.log('🎓 Moduł 2: Dostępny - Akademia Cyfrowa Pro');
+            console.log('🎨 Moduł 3: W opracowaniu - Studio Cyfrowego Twórcy');
+        });
+    </script>
+</body>
+</html>
