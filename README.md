@@ -59,28 +59,7 @@ Podstawy obsługi komputera i systemów operacyjnych
 
 ### **Krok 1: Przygotowanie Technicznym**
 
-#### **Opcja A: Lokalne Wdrożenie (Zalecane)**
-```bash
-# Pliki do pobrania:
-1. index.html (portal główny)
-2. cyfrowy_odkrywca_swiata.html (Moduł 1)
-3. przygoda_osi.html (Moduł 1)
-4. akademia_cyfrowa.html (Moduł 1)
-5. akademia_cyfrowa_pro.html (Moduł 2)
-
-# Struktura katalogów:
-portal-edukacyjny/
-├── index.html
-├── modul1-podstawowy/
-│   ├── index.html
-│   ├── cyfrowy_odkrywca_swiata.html
-│   ├── przygoda_osi.html
-│   └── akademia_cyfrowa.html
-└── modul2-akademia/
-    └── index.html
-```
-
-#### **Opcja B: GitHub Pages (Online)**
+#### **Opcja: GitHub Pages (Online)**
 1. Utwórz konto GitHub
 2. Stwórz repozytorium `portal-edukacyjny`
 3. Wyślij pliki HTML
